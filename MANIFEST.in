@@ -1,0 +1,21 @@
+include *.txt
+include *.md
+include *.cfg
+include *.pkl
+recursive-include ./dl_classification_model/*
+
+include dl_classification_model/datasets/data.csv
+include dl_classification_model/datasets/train.csv
+include dl_classification_model/datasets/test.csv
+include dl_classification_model/trained_models/*.pkl
+include dl_classification_model/VERSION
+
+
+include ./tests
+include ./requirements.txt
+exclude *.log
+
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+global-exclude *__pycache__
+global-exclude *.ipynb
