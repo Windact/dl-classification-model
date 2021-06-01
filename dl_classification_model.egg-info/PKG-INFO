@@ -1,0 +1,24 @@
+Metadata-Version: 2.1
+Name: dl-classification-model
+Version: 0.1.0
+Summary: Neural Net Classification model to predict which pumps are functional or not with data from Taarifa datadriven challenge
+Home-page: https://github.com/Windact/dl-classification-model.git
+Author: GeoffroyA
+Author-email: geoffroy-08@hotmail.fr
+License: BSD 3
+Description: 
+        # dl-classification-model
+        Deep learning  model classification model for the water pumps project
+        
+        This package in its actual stage is in for a specific purpose. By using it you are taking your own risks
+Platform: UNKNOWN
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Requires-Python: >=3.8.5
+Description-Content-Type: text/markdown
