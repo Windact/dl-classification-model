@@ -22,7 +22,7 @@ def test_single_make_prediction():
 
     assert subject.get("predictions")[0] in ["functional","functional","non functional or functional needs repair"]
     assert type(subject.get("predictions")) == np.ndarray
-    assert subject.get("predictions").shape == (1,)
+    assert subject.get("predictions").shape == (1,1)
     assert subject.get("version") == _version
 
 
@@ -43,7 +43,7 @@ def test_multiple_make_prediction():
 
     assert subject.get("predictions")[0] in ["functional","functional","non functional or functional needs repair"]
     assert type(subject.get("predictions")) == np.ndarray
-    assert subject.get("predictions").shape == (test_data.shape[0],)
+    assert subject.get("predictions").shape == (test_data.shape[0],1)
     assert subject.get("version") == _version
     
 

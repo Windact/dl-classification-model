@@ -27,8 +27,8 @@ def make_prediction(input_data):
     # Checking if the data is valid
     if utils.input_data_is_valid(data):
         # loading the latest fitted pipeline
-        pipe_line_file_name = f"{config.MODEL_PIPELINE_NAME}{_version}.pkl"
-        _pipe_pump = utils.load_pipeline(file_name=pipe_line_file_name)
+        file_name = {"dataprep_name": f"{config.DATAPREP_PIPELINE_NAME}{_version}.pkl","model_name" : f"{config.MODEL_PIPELINE_NAME}{_version}"}
+        _pipe_pump = utils.load_pipeline(file_name=file_name)
         # Predictions
         outputs = _pipe_pump.predict(data)
 

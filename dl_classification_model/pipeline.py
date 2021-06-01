@@ -55,4 +55,4 @@ pump_pipeline =Pipeline(steps=[("feature_to_keeper",pp.FeatureKeeper(variables_t
                          ("rareCategories_grouper",pp.RareCategoriesGrouping(threshold=config.VARIABLES_THRESHOLD)),
                          ("one_hot_encoder",OneHotEncoder(variables=config.REAL_CATEGORICAL_VARIABLES,drop_last=False)),
                          ("scaler",MinMaxScaler()),
-                         ("model",KerasClassifier(build_fn=create_model,epochs=65,validation_split=0.2,batch_size= 256, verbose=1,callbacks=[early_stop,reduce_lr],shuffle = True))])
+                         ("model",KerasClassifier(build_fn=create_model,epochs=1,validation_split=0.2,batch_size= 256, verbose=1,callbacks=[early_stop,reduce_lr],shuffle = True))])

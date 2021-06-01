@@ -7,6 +7,7 @@ from sklearn.model_selection import GridSearchCV
 import tensorflow as tf
 import random as python_random
 import logging
+import joblib
 
 from dl_classification_model.config import config
 from dl_classification_model import pipeline
@@ -52,15 +53,17 @@ def run_training():
 
     # Training wtih gridsearch
     params = {"model__batch_size":[256,500],
-          "model__beta_1":[0.8,0.85,0.95],
+          "model__beta_1":[0.8,0.95],
           "model__learning_rate": [0.01,0.001],
-          "model__drop_rate_input":[0,0.2,0.3],
+          "model__drop_rate_input":[0,0.3],
           "model__drop_rate_hidden":[0.2,0.3],
-          "model__units":[80,100,120]}
-    clf = GridSearchCV(estimator=pipeline.pump_pipeline, param_grid=params, scoring='neg_log_loss',n_jobs=-1,cv=3,refit=True,verbose=2)
+          "model__units":[80,100]}
+    clf = GridSearchCV(estimator=pipeline.pump_pipeline, param_grid=params, scoring='neg_log_loss',n_jobs=-1,cv=3,refit=True,verbose=4)
     clf.fit(X_train, y_train)
+    best_params_file = f"best_params_v{_version}.pkl"
+    joblib.dump(clf.best_params_,f"{config.TRAINED_MODEL_DIR / best_params_file}")
     _logger.info(f"Best parameters : {clf.best_params_}")
-
+    
     #utils.show_results(clf,X_train_transformed,X_test_transformed,y_train,y_test)
 
     # Report

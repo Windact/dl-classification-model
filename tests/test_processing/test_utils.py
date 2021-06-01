@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import sklearn
 import joblib
 
@@ -24,35 +25,50 @@ def test_save_pipeline():
     """ Testing the save_pipeline function """
 
     # Given
-    try:
-        pipeline_for_test = joblib.load(config.TRAINED_MODEL_DIR/f"{config.MODEL_PIPELINE_NAME}{_version}.pkl")
-        subject_file_name = f"{config.MODEL_PIPELINE_NAME}{_version}.pkl"
-    except :
-        pipeline_ = pipeline.pump_pipeline 
-        subject_file_name = f"fake_pipe_line_model_v{_version}.pkl"
+    # read the data
+    data = pd.read_csv(f"{config.DATASET_DIR/config.TRAINING_DATA_FILE}",sep=",", encoding="utf-8")
 
+    # Split in X and y
+    X = data.drop(labels=config.TARGET_FEATURE_NAME, axis=1)
+    y = data[config.TARGET_FEATURE_NAME]
+
+    # For the 2 classes classification
+    y = np.where(y=="functional","functional","non functional or functional needs repair")
+    _pipeline = pipeline.pump_pipeline
+
+    _pipeline.fit(X,y)
+    subject_file_name_model = f"fake_model_{_version}fake_model"
+    subject_file_name_dataprep = f"fake_dataprep{_version}.pkl"
+    subject_classes_name = f"{subject_file_name_model}_classes_names_v{_version}.pkl"
     # When
-    utils.save_pipeline(pipeline_for_test,subject_file_name)
+    utils.save_pipeline(_pipeline,save_file_name=subject_file_name_model,dataprep_name = subject_file_name_dataprep)
+
 
     # Then
     # Get the files in the model save's directory
     trained_model_dir_file_list = [file.name for file in config.TRAINED_MODEL_DIR.iterdir()]
     
-    # Check if the pipeline was saved in TRAINED_MODEL_DIR and with the right filename
-    assert subject_file_name in trained_model_dir_file_list
+    # Check if the model was saved in TRAINED_MODEL_DIR and with the right filename
+    assert subject_file_name_model in trained_model_dir_file_list
+    # Check if the dataprep pipeline was saved in TRAINED_MODEL_DIR and with the right filename
+    assert subject_file_name_dataprep in trained_model_dir_file_list
+    # Check if the model's classes names were saved in TRAINED_MODEL_DIR and with the right filename
+    assert subject_classes_name in trained_model_dir_file_list
     # Check if the __init__.py file is in the TRAINED_MODEL_DIR
     assert "__init__.py" in trained_model_dir_file_list
     # Check if the TRAINED_MODEL_DIR folder contains just the new saved pipeline and the __init__.py file
-    assert len(trained_model_dir_file_list) == 2
-    # remove the fake pipeline
-    if subject_file_name == f"fake_pipe_line_model_v{_version}.pkl":
-        config.TRAINED_MODEL_DIR/subject_file_name.unlink()
+    # remove the fake saves
+    utils.rm_tree(config.TRAINED_MODEL_DIR/subject_file_name_model)
+ 
+    (config.TRAINED_MODEL_DIR/subject_file_name_dataprep).unlink()
+    (config.TRAINED_MODEL_DIR/subject_classes_name).unlink()
+
 
 def test_load_pipeline():
     """ Testing the load_pipeline function """
 
     # Given
-    pipeline_file_name = f"{config.MODEL_PIPELINE_NAME}{_version}.pkl"
+    pipeline_file_name = {"dataprep_name": f"{config.DATAPREP_PIPELINE_NAME}{_version}.pkl","model_name" : f"{config.MODEL_PIPELINE_NAME}{_version}"}
 
     # When
     subject = utils.load_pipeline(file_name= pipeline_file_name)
@@ -64,37 +80,45 @@ def test_load_pipeline():
 def test_remove_old_pipelines():
     """ Test the remove_old_pipelines function """
 
-    former_version_test = "1.0.0"
-    latest_version_test = "2.0.0"
+    # Given
+    # read the data
+    data = pd.read_csv(f"{config.DATASET_DIR/config.TRAINING_DATA_FILE}",sep=",", encoding="utf-8")
 
-    pipeline_for_test = pipeline.pump_pipeline
+    # Split in X and y
+    X = data.drop(labels=config.TARGET_FEATURE_NAME, axis=1)
+    y = data[config.TARGET_FEATURE_NAME]
+
+    # For the 2 classes classification
+    y = np.where(y=="functional","functional","non functional or functional needs repair")
+    _pipeline = pipeline.pump_pipeline
+
+    _pipeline.fit(X,y)
+
+    subject_file_name_pipe = f"fake_pipe_path{_version}.pkl"
 
     # Saving the former pipeline
-    save_former_name = f"former_pipeline_v{former_version_test}.pkl"
-    save_former_path = config.TRAINED_MODEL_DIR/save_former_name
-    joblib.dump(pipeline_for_test,save_former_path)
+    save_pipe_path = config.TRAINED_MODEL_DIR/subject_file_name_pipe
+    joblib.dump(_pipeline.steps[:-1],save_pipe_path)
 
     trained_model_dir_file_list = [file.name for file in config.TRAINED_MODEL_DIR.iterdir()]
 
-    assert save_former_name in trained_model_dir_file_list
+    assert save_pipe_path.name in trained_model_dir_file_list
 
     # Saving the subject pipeline
-    subject = f"subject_pipeline_v{latest_version_test}.pkl"
+    subject = "subject_pipeline_v_fake.pkl"
     save_subject_test_path = config.TRAINED_MODEL_DIR/subject
-    joblib.dump(pipeline_for_test,save_subject_test_path)
+    joblib.dump(_pipeline.steps[:-1],save_subject_test_path)
 
     # When 
-    utils.remove_old_pipelines(files_to_keep=[subject,f"{config.MODEL_PIPELINE_NAME}{_version}.pkl"])
+    utils.remove_old_pipelines(files_to_keep=[subject])
 
     trained_model_dir_file_list = [file.name for file in config.TRAINED_MODEL_DIR.iterdir()]
 
     # Then
     assert subject in trained_model_dir_file_list
+    assert save_pipe_path.name not in trained_model_dir_file_list
     assert "__init__.py" in trained_model_dir_file_list 
-    if f"{config.MODEL_PIPELINE_NAME}{_version}.pkl" in trained_model_dir_file_list:
-        assert len(trained_model_dir_file_list) == 3
-    else:
-        assert len(trained_model_dir_file_list) == 2
+
     # removing the fake pipeline
     save_subject_test_path.unlink()
 

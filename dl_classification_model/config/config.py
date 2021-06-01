@@ -10,13 +10,15 @@ pd.options.display.max_columns = 10
 PACKAGE_ROOT = pathlib.Path(dl_classification_model.__file__).resolve().parent
 TRAINED_MODEL_DIR = PACKAGE_ROOT / "trained_models"
 DATASET_DIR = PACKAGE_ROOT / "datasets"
-
+CONFIG_PATH = PACKAGE_ROOT / "config"
 # data
 TRAINING_DATA_FILE = "train.csv"
 TESTING_DATA_FILE = "test.csv"
 TARGET_FEATURE_NAME = "status_group"
 
+
 MODEL_PIPELINE_NAME = "neural_net_pipe_v"
+DATAPREP_PIPELINE_NAME = "dataprep_neural_net_pipe_v"
 
 
 # Seed for random state
