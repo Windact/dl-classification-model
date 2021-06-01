@@ -21,17 +21,17 @@ jobs:
       - *prepare_venv
       - restore_cache:
           keys:
-            - py-deps-{{checksum "packages/dl_classification_model/requirements.txt"}}
+            - py-deps-{{checksum "dl_classification_model/requirements.txt"}}
       - run:
           name: Running tests
           command: |
             . venv/bin/activate
-            pip install -r packages/dl_classification_model/requirements.txt
-            py.test -vv packages/dl_classification_model/tests
+            pip install -r dl_classification_model/requirements.txt
+            py.test -vv dl_classification_model/tests
       - save_cache:
           paths: 
             - "/venv"
-          key: py-deps-{{checksum "packages/dl_classification_model/requirements.txt"}}
+          key: py-deps-{{checksum "dl_classification_model/requirements.txt"}}
 
   train_and_upload_dl_classification_model:
     <<: *defaults
@@ -40,34 +40,34 @@ jobs:
       - *prepare_venv
       - restore_cache:
           keys:
-            - py-deps-{{checksum "packages/dl_classification_model/requirements.txt"}}
+            - py-deps-{{checksum "dl_classification_model/requirements.txt"}}
       - run:
           name: Setup env
           command: |
             . venv/bin/activate
-            pip install -r packages/dl_classification_model/requirements.txt
+            pip install -r dl_classification_model/requirements.txt
       - run:
           name: Train model
           command: |
             . venv/bin/activate
-            PYTHONPATH=./packages/dl_classification_model python3 packages/dl_classification_model/dl_classification_model/train_pipeline.py
+            PYTHONPATH=./dl_classification_model python3 dl_classification_model/dl_classification_model/train_pipeline.py
       - run:
           name: Publish model to Gemfury
           command: |
             . venv/bin/activate
             chmod +x ./scripts/publish_model.sh
-            ./scripts/publish_model.sh ./packages/dl_classification_model/
+            ./scripts/publish_model.sh ./dl_classification_model/
       - save_cache:
           paths:
             - "/venv"
-          key: py-deps-{{checksum "packages/dl_classification_model/requirements.txt"}}
+          key: py-deps-{{checksum "dl_classification_model/requirements.txt"}}
 
 workflows:
   version: 2.1
   test-all:
     jobs:
       - test_dl_classification_model
-      - train_and_upload_classification_model:
+      - train_and_upload_dl_classification_model:
           requires:
             - test_dl_classification_model
           filters:
