@@ -67,7 +67,7 @@ workflows:
   test-all:
     jobs:
       - test_dl_classification_model
-      - train_and_upload_classification_model:
+      - train_and_upload_dl_classification_model:
           requires:
             - test_dl_classification_model
           filters:
